@@ -8,7 +8,7 @@ def reset_db():
   os.unlink('knowledge.db')
   conn = sqlite3.connect('knowledge.db')
   c = conn.cursor()
-  c.executescript(open('schema.sql', 'r').read())
+  c.executescript(open('docs/schema.sql', 'r').read())
 
 def norm(value, label):
   if label.lower() == 'email':
