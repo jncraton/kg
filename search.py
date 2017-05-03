@@ -1,13 +1,14 @@
 import sqlite3
+import sys
 
 conn = sqlite3.connect('knowledge.db')
 c = conn.cursor()
 
 for row in c.execute("""
   select distinct entity_id from factsets where id in (
-    select distinct factset_id from facts where value like '%smith%'
+    select distinct factset_id from facts where value like '%%%s%%'
   )
-  """).fetchall():
+  """ % sys.argv[1]).fetchall():
   
   print("Entity: %s" % row[0])
 
