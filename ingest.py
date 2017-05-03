@@ -4,6 +4,7 @@ import csv
 import hashlib
 import pandas
 import email_normalize
+import sys
 
 def reset_db():
   os.unlink('knowledge.db')
@@ -25,8 +26,6 @@ def get_entity(factset, ids, c):
 
     c.execute('select entity_id from factsets where id in (select factset_id from facts where value=?)', (value,))
     entities = c.fetchall()
-
-    print(value,len(entities))
 
     if len(entities) > 0:
       return entities[0][0]
@@ -62,6 +61,9 @@ def ingest_csv(filename):
   ids = get_df_ids(df)
 
   for (i, row) in df.iterrows():
+    if i % 100 == 0:
+      print("%i rows ingested from %s" % (i, filename))
+  
     entity_id = get_entity(row, ids, c)
     
     c.execute('insert into factsets (datasource_id, datasource_field, entity_id) values (?,?,?)',
@@ -76,8 +78,7 @@ def ingest_csv(filename):
             
   conn.commit()
 
-reset_db()
-ingest_csv('test/studir.csv')
-ingest_csv('test/stusucc.csv')
-#ingest_csv('test/studiv.csv')
-#ingest_csv('test/retention.csv')
+if __name__ == '__main__':
+  reset_db()
+  for filename in sys.argv[1:]:
+    ingest_csv(filename)
