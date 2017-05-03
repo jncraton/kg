@@ -21,6 +21,9 @@ def norm(value, label):
 
 def get_entity(factset, ids, c):
   """ attempts to return a list of entity ids related a given factset """
+  if not ids:
+    return None
+
   for label in ids:
     value = norm(factset[label], label)
     label = label.lower().replace(' ','-').replace('_','-')
