@@ -11,6 +11,7 @@ def reset_db():
   conn = sqlite3.connect('knowledge.db')
   c = conn.cursor()
   c.executescript(open('docs/schema.sql', 'r').read())
+  conn.commit()
 
 def norm(value, label):
   if label.lower() == 'email':
@@ -46,7 +47,10 @@ def get_df_ids(df):
   return ids
 
 def ingest_csv(filename):
+  print('Ingesting %s...' % filename)
   sha256 = hashlib.sha256(open(filename, 'rb').read()).hexdigest()
+
+  print('%s hash is %s' % (filename, sha256))
 
   conn = sqlite3.connect('knowledge.db')
   c = conn.cursor()
@@ -60,8 +64,10 @@ def ingest_csv(filename):
     
   ids = get_df_ids(df)
 
+  print('IDs for %s: %s' % (filename, ','.join(ids)))
+
   for (i, row) in df.iterrows():
-    if i % 100 == 0:
+    if i % 1000 == 0:
       print("%i/%i rows ingested from %s" % (i, len(df), filename))
   
     entity_id = get_entity(row, ids, c)
@@ -75,7 +81,7 @@ def ingest_csv(filename):
       value = norm(row[key], key)
       c.execute('insert into facts (value,label,factset_id) values (?,?,?)',
         (value, key.lower(), factset_id))
-            
+
   conn.commit()
 
 if __name__ == '__main__':
