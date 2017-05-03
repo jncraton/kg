@@ -25,6 +25,8 @@ create table facts (
   id integer primary key
 );
 
+create index facts_value_idx on facts(value);
+
 -- an entity is something that exists that has associated facts
 -- e.g. a person
 create table entities (
