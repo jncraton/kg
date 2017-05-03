@@ -62,7 +62,7 @@ def ingest_csv(filename):
 
   for (i, row) in df.iterrows():
     if i % 100 == 0:
-      print("%i rows ingested from %s" % (i, filename))
+      print("%i/%i rows ingested from %s" % (i, len(df), filename))
   
     entity_id = get_entity(row, ids, c)
     
